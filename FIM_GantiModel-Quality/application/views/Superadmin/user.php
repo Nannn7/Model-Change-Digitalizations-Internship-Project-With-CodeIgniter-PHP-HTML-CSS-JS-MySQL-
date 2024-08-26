@@ -1,0 +1,270 @@
+<div class="flash-data" data-flashdata="<?= $this->session->flashdata("flash"); ?>"></div>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-11">
+                    <h1>Kelola User</h1>
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" id="btnTambah" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-lg">Tambah</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Data User</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="TabelData" class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th hidden>ID</th>
+                                        <th>NRP</th>
+                                        <th>Nama</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th hidden>Role</th>
+                                        <th>Status</th>
+                                        <th hidden>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 0; ?>
+                                    <?php foreach ($user as $u) { ?>
+                                        <tr>
+                                            <td>
+                                                <?php $i++; ?>
+                                                <?php echo $i ?>
+                                            </td>
+                                            <td hidden><?= $u->id; ?></td>
+                                            <td><?= $u->nrp; ?></td>
+                                            <td><?= $u->nama; ?></td>
+                                            <td><?= $u->username; ?></td>
+                                            <td><?php
+                                                $stat = $u->role;
+                                                if ($stat == 1) echo "<span class='right badge badge-danger'>Super Admin</span>";
+                                                else if ($stat == 2) echo "<span class='right badge badge-primary'>Operator Ganti Model</span>";
+                                                else if ($stat == 3) echo "<span class='right badge badge-success'>Operator Quality</span>";
+                                                else if ($stat == 4) echo "<span class='right badge badge-warning'>IN QI</span>";
+                                                else if ($stat == 5) echo "<span class='right badge badge-dark'>Otentikasi</span>";
+                                                ?>
+                                            </td>
+                                            <td hidden><?= $u->role; ?></td>
+                                            <td><?php
+                                                $stat = $u->status;
+                                                if ($stat == 0) echo "<span class='right badge badge-danger'>Tidak Aktif</span>";
+                                                else if ($stat == 1) echo "<span class='right badge badge-info'>Aktif</span>";
+                                                ?>
+                                            </td>
+                                            <td hidden><?= $u->status; ?></td>
+                                            <td>
+                                                <button id="btnEdit" title="Edit Data User" type="button" data-toggle="modal" data-target="#modal-lg" class="btn btn-default btn-xs">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <?php
+                                                if ($stat == 1) echo "<button id='btnAktif' type='button' data-toggle='modal' data-target='#modal-status' class='btn btn-warning btn-xs' title='Nonaktifkan User'><i class='fas fa-times'></i></button>";
+                                                else if ($stat == 0) echo "<button id='btnNonaktif' type='button' data-toggle='modal' data-target='#modal-status' class='btn btn-info btn-xs' title='Aktifkan User'><i class='fas fa-check'></i></button>";
+                                                ?>
+                                                <button class="btn btn-danger btn-xs" title="Hapus Data User" type="button" onclick="hapusUser(<?= $u->id; ?>)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal Tambah User -->
+<form method="post" role="form" id="formInput" action="<?php echo site_url('SA_User/tambahEdit') ?>">
+    <div class="modal fade" id="modal-lg">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <label id="headerModal">Masukan Data User</label>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <input id="operation" name="operation" type="hidden" value="add">
+                                    <input id="txtID" name="id" type="hidden" />
+                                    <input id="status" name="status" type="hidden" />
+                                    <label>NRP</label>
+                                    <input type="text" name="nrp" id="nrp" class="form-control" required>
+                                    <label>Nama</label>
+                                    <input type="text" id="nama" name="nama" class="form-control" required>
+                                    <label>Username</label>
+                                    <input type="text" name="username" id="username" class="form-control" required>
+                                    <label>Password</label>
+                                    <input type="password" name="password" id="password" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Pilih Role User</label>
+                                    <select class="custom-select" id="role" name="role">
+                                        <option value="1">Super Admin</option>
+                                        <option value="2">Operator Ganti Model</option>
+                                        <option value="3">Operator Quality</option>
+                                        <option value="4">In QI</option>
+                                        <option value="5">Otentikasi</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <a id="btnClear" class="btn btn-default">Clear</a>
+                        <input type="submit" id="submit" value="Simpan" class="btn btn-info" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal Edit Status -->
+<form role="form" action="<?php echo site_url('SA_User/editStatus') ?>" method="post">
+    <div class="modal fade" id="modal-status">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <input type="hidden" id="txtID2" name="id" class="form-control" />
+                    <h5 id="txtConfirm">#</h5>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                    <button id="btnConfirm" type="submit" class="btn btn-info">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<?php $this->load->view('Template/footer'); ?>
+
+<script>
+    $(document).ready(function() {
+        var id = document.getElementById('txtID');
+        var nrp = document.getElementById('nrp');
+        var nama = document.getElementById('nama');
+        var username = document.getElementById('username');
+        var role = document.getElementById('role');
+        var password = document.getElementById('password');
+        var status = document.getElementById('status');
+
+        var id2 = document.getElementById('txtID2');
+        var txtConfirm = document.getElementById('txtConfirm');
+        var headerModal = document.getElementById('headerModal');
+
+        // var id3 = document.getElementById('txtID3');
+
+        function clear() {
+            nrp.value = "";
+            nama.value = "";
+            username.value = "";
+            role.value = "";
+        }
+
+        $("#TabelData").on('click', '#btnEdit', function() {
+            var currentRow = $(this).closest("tr");
+            var colID = currentRow.find("td:eq(1)").text();
+            var colNRP = currentRow.find("td:eq(2)").text();
+            var colNama = currentRow.find("td:eq(3)").text();
+            var colUsername = currentRow.find("td:eq(4)").text();
+            var colRole = currentRow.find("td:eq(6)").text();
+            var colStatus = currentRow.find("td:eq(8)").text();
+
+            headerModal.innerHTML = "Edit Data User";
+            id.value = colID;
+            nrp.value = colNRP;
+            nama.value = colNama;
+            username.value = colUsername;
+            role.value = colRole;
+            status.value = colStatus;
+
+            operation.value = "edit";
+        });
+
+        $("#TabelData").on('click', '#btnAktif, #btnNonaktif', function() {
+            var currentRow = $(this).closest("tr");
+            var colID = currentRow.find("td:eq(1)").text();
+            var confirmText = ($(this).attr('id') === 'btnAktif') ? "Apakah Anda Ingin Menonaktifkan Data?" : "Apakah Anda Ingin Mengaktifkan Data?";
+
+            $("#txtConfirm").text(confirmText);
+            $("#txtID2").val(colID);
+        });
+
+        $('#btnTambah').on("click", function(e) {
+            headerModal.innerHTML = "Masukkan Data User";
+            id.value = "";
+            status.value = "";
+            clear();
+        });
+
+        $('#btnClear').on("click", function(e) {
+            clear();
+        });
+    });
+</script>
+
+<script>
+    function hapusUser(id) {
+        Swal.fire({
+            title: 'Konfirmasi Hapus Data User',
+            text: 'Apakah Anda Yakin Ingin Menghapus Data User?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Batal',
+            confirmButtonText: 'Ya'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: '<?= site_url('SA_User/deleteUser'); ?>',
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Sukses!', 'Data berhasil dihapus!', 'success');
+                            location.reload();
+                        } else {
+                            Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error!', 'Terjadi kesalahan saat menghubungi server.', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>
